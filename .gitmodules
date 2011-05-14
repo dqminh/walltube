@@ -1,0 +1,6 @@
+[submodule "public/js/mylibs/backbone_localstorage"]
+	path = public/js/mylibs/backbone_localstorage
+	url = https://github.com/jeromegn/Backbone.localStorage.git
+[submodule "public/js/mylibs/socketio"]
+	path = public/js/mylibs/socketio
+	url = git://github.com/LearnBoost/Socket.IO.git
