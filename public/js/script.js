@@ -9,6 +9,7 @@ var playlist = [],
     player,
     current = 0;
 
+// play the current video in playlist
 function play() {
     if (player) {
         if (playlist.length > 0 && current < playlist.length) {
@@ -18,6 +19,7 @@ function play() {
     }
 }
 
+// set timeout for the playing
 function playLazy(delay) {
     if (typeof playLazy.timeoutid != 'undefined') {
         window.clearTimeout(playLazy.timeoutid);
@@ -28,6 +30,8 @@ function playLazy(delay) {
 // ### Backbone Inteface implementation
 // Selected tags that will be used to filter tweets
 var Tags = [];
+
+// assert that the tweet will contain valid youtube url
 var youtubeMatcher = function(string) {
     return string.match(/https?:\/\/(?:[a-zA_Z]{2,3}.)?(?:youtube\.com\/watch\?)((?:[\w\d\-\_\=]+&amp;(?:amp;)?)*v(?:&lt;[A-Z]+&gt;)?=([0-9a-zA-Z\-\_]+))/i);
 };
@@ -47,14 +51,16 @@ var Thumbnail = Backbone.View.extend({
     },
     initialize: function(options) {
         _.bindAll(this, "render", "play");
+        // initialize the template when jquery is ready
         this.template = _.template($("#playlist_template").html());
+        // push the video into playlist
         playlist.push(this.model.get("video_id"));
-
         // if the playlist only has 1 item now, play it
         if (playlist.length === 1 && current === 0) {
             this.play();
         }
     },
+    // play the view's associated video
     play: function() {
         current = this.model.collection.indexOf(this.model);
         playLazy(500);
@@ -71,10 +77,14 @@ var Thumbnail = Backbone.View.extend({
     }
 });
 
+// ###Playlist
 var PlaylistView = Backbone.View.extend({
     el: "#playlist",
     initialize: function(options) {
         _.bindAll(this, "render", "addOne");
+
+        // whenever the collection is updated, we want the view to be updated
+        // as well
         this.collection.bind("add", this.addOne);
     },
     addOne: function(model) {
@@ -121,18 +131,23 @@ function loadNext() {
 }
 
 function onPlayerStateChange(state){
+    // When the current video ending, we want to play the next one
+    // TODO: also highlight the current playing video in the playlist
     if (state === 0) {
         loadNext();
     }
 }
 
 function onPlayerError(error) {
+    // When the current video has troubled playing, we want to play the next
+    // one
     if (error) {
         loadNext();
     }
 }
 
 $(function() {
+    // Initialize the swfobject that will handle youtube player
     swfobject.embedSWF(
         "http://www.youtube.com/apiplayer?enablejsapi=1&version=3&autoplay=1",
         'video', '425', '344', '8', null, null,
@@ -140,7 +155,8 @@ $(function() {
         {id: playerId}
     );
 
-    var followTag = $("#follow_tag");
+    var followTag = $("#follow_tag"),
+        inputTag = $('#add_tag');
 
     // Init a websocket connection to server to retrieve the tweets
     var Courrier = new io.Socket('127.0.0.1', {port: 8011});
@@ -150,20 +166,22 @@ $(function() {
     });
     Courrier.on('message', function(message) {
         // get a new tweet that matched our tags. Hurray !!!
-        // Add it to our request
         var parsed = youtubeMatcher(message.text);
 
         if (parsed !== undefined) {
+            // If this is a valid tweet that contains an youtube video,
+            // Add it to our request
             message.video_link = parsed[0];
             message.video_id = parsed[2];
             Request.add(message);
         }
     });
 
-    // whenever we add a new tag, send it to server so we can refresh the stream
     followTag.click(function() {
-        var tag = $("#add_tag").val();
+        var tag = inputTag.val();
 
+        // whenever we add a new tag, send it to server so we can refresh the
+        // stream
         if (val !== undefined && val.length > 0) {
             Courrier.send(val);
         }
