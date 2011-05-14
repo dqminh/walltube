@@ -80,18 +80,47 @@ a:hover { color: #036; }
  *
  * Author: 
  */
+body {
+    color: #EDC078;
+}
 
+#container {
+    margin: 0 auto;
+    width: 960px;
+}
 
+#header {
+}
 
+h1.title {
+    font-size: 40px;
+    font-weight: bold;
+    color: #D95B43;
+}
 
+ul li {
+    list-style: none;
+    display: inline-block;
+    margin-right: 10px;
+    padding-left: 10px;
+}
 
+#main {
+}
 
+#playlist {
+}
 
+.button {
+    padding: 10px;
+    color: white;
+    background-color: #D95B43;
+}
 
-
-
-
-
+a:hover {
+    cursor: pointer;
+}
+/*End custom style*/
 
 
 .ir { display: block; text-indent: -999em; overflow: hidden; background-repeat: no-repeat; text-align: left; direction: ltr; }

@@ -23,13 +23,13 @@
 <body>
 
     <div id="container">
-        <header>
-            <h1 class="title">Walltube - SHDH.sg</h1>
+        <header id="header">
+            <h1 class="title">Walltube</h1>
         </header>
         <div id="main" role="main">
             <div id="follow">
                 <input name="add_tag" id="add_tag" type="text" placeholder="Type a tag and press Enter to follow" />
-                <a id="follow_tag">Follow hashtag</a>
+                <a id="follow_tag" class="button">Follow hashtag</a>
             </div>
             <div id="following_tags">
                 <!-- Display tags that we are following -->
@@ -37,8 +37,12 @@
                 </ul>
             </div>
             <div id="controls">
-                <a id="start">Start</a>
-                <a id="stop">Pause</a>
+                <ul>
+                    <li><a id="previous" class="button">Previous</a></li>
+                    <li><a id="play" class="button">Play</a></li>
+                    <li><a id="pause" class="button">Pause</a></li>
+                    <li><a id="next" class="button">Next</a></li>
+                </ul>
             </div>
             <div id="main">
                 <!-- This is where the current video is playing -->
@@ -52,7 +56,6 @@
 
         </div>
         <footer>
-
         </footer>
         <script type="text/html" id="playlist_template">
             <li>
@@ -75,10 +78,6 @@
     <!-- scripts concatenated and minified via ant build script-->
     <script src="js/plugins.js"></script>
     <script src="js/script.js"></script>
-
-    
-
-    
     <!-- end scripts-->
 
     <!--[if lt IE 7 ]>

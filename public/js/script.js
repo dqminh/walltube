@@ -1,18 +1,24 @@
 /*
 * Author: dqminh (http://github.com/dqminh)
 * Walltube implementation
+*
+* TODO:
+* remove a tags
+* control the player using tweets (how)
 */
 
 // ### Youtube implementation
 var playlist = [],
     playerId = "myvideo",
     player,
+    isPlaying = false,
     current = 0;
 
 // play the current video in playlist
 function play() {
     if (player) {
         if (playlist.length > 0 && current < playlist.length) {
+            isPlaying = true;
             player.loadVideoById(playlist[current]);
             player.playVideo();
         }
@@ -114,11 +120,11 @@ function onYouTubePlayerReady(playerid) {
         collection: Request
     });
 
-    Request.add({
+    /*Request.add({
         video_link: "http://www.youtube.com/watch?v=NQOLyplEmzw",
         video_id: "NQOLyplEmzw",
         user: {screen_name: "dqminh"}
-    });
+    });*/
 }
 
 // load the next video in playlist
@@ -149,14 +155,19 @@ function onPlayerError(error) {
 $(function() {
     // Initialize the swfobject that will handle youtube player
     swfobject.embedSWF(
-        "http://www.youtube.com/apiplayer?enablejsapi=1&version=3&autoplay=1",
+        "http://www.youtube.com/apiplayer?enablejsapi=1&version=3",
         'video', '425', '344', '8', null, null,
         {allowScriptAccess: 'always', allowFullScreen: 'true'},
         {id: playerId}
     );
 
     var followTag = $("#follow_tag"),
-        inputTag = $('#add_tag');
+        tagList = $('#following_tags').find('ul'),
+        inputTag = $('#add_tag'),
+        previous = $('#previous'),
+        next = $('#next'),
+        play = $('#play'),
+        pause = $('#pause');
 
     // Init a websocket connection to server to retrieve the tweets
     var Courrier = new io.Socket('127.0.0.1', {port: 8011});
@@ -184,7 +195,34 @@ $(function() {
         // stream
         if (val !== undefined && val.length > 0) {
             Courrier.send(val);
+            tagList.append("<li>" + val + "</li>");
         }
         return false;
+    });
+
+    previous.click(function() {
+        // if the pointer is not pointing to the first, then move it back
+        current = (current > 0) ? current - 1 : 0;
+
+        play();
+    });
+
+    next.click(function() {
+        // if the pointer is not pointing to the last, the move it forward
+        current = (current < playlist.length - 1) ? current + 1: current;
+        play();
+    });
+
+    play.click(function() {
+        // oh, start playing already
+        if (playlist.length > 0 && !isPlaying) {
+            player.playVideo();
+        }
+    });
+
+    pause.click(function() {
+        // pause the playing
+        player.stopVideo();
+        isPlaying = false;
     });
 });
