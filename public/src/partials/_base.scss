@@ -1,0 +1,33 @@
+// Here is where you can define your constants for your application and to configure the blueprint framework.
+// Feel free to delete these if you want keep the defaults:
+
+$blueprint-grid-columns: 24;
+$blueprint-container-size: 950px;
+$blueprint-grid-margin: 10px;
+
+// Use this to calculate the width based on the total width.
+// Or you can set $blueprint-grid-width to a fixed value and unset $blueprint-container-size -- it will be calculated for you.
+$blueprint-grid-width: ($blueprint-container-size + $blueprint-grid-margin) / $blueprint-grid-columns - $blueprint-grid-margin;
+
+$brick: #D95B43;
+$font: "Helvetica Neue", Helvetica, Arial, serif;
+
+.button {
+    //@include border-radius(5px, 5px);
+    background-color: $brick;
+    padding: 10px;
+    margin: 10px;
+    color: white;
+    font-weight: bold;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+ul {
+    list-style: none;
+    li {
+        display: inline;
+    }
+}

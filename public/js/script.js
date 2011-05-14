@@ -106,6 +106,7 @@ var PlaylistView = Backbone.View.extend({
     }
 });
 
+var Request = new RequestsCollection();
 
 // ### Initialize Youtube
 function onYouTubePlayerReady(playerid) {
@@ -115,16 +116,9 @@ function onYouTubePlayerReady(playerid) {
         player.addEventListener("onError", "onPlayerError");
     }
     // initialize the request collection
-    var Request = new RequestsCollection();
     window.PlayListView = new PlaylistView({
         collection: Request
     });
-
-    /*Request.add({
-        video_link: "http://www.youtube.com/watch?v=NQOLyplEmzw",
-        video_id: "NQOLyplEmzw",
-        user: {screen_name: "dqminh"}
-    });*/
 }
 
 // load the next video in playlist
@@ -164,10 +158,10 @@ $(function() {
     var followTag = $("#follow_tag"),
         tagList = $('#following_tags').find('ul'),
         inputTag = $('#add_tag'),
-        previous = $('#previous'),
-        next = $('#next'),
-        play = $('#play'),
-        pause = $('#pause');
+        previousVid = $('#previous'),
+        nextVid = $('#next'),
+        playVid = $('#play'),
+        pauseVid = $('#pause');
 
     // Init a websocket connection to server to retrieve the tweets
     var Courrier = new io.Socket('127.0.0.1', {port: 8011});
@@ -179,9 +173,10 @@ $(function() {
         // get a new tweet that matched our tags. Hurray !!!
         var parsed = youtubeMatcher(message.text);
 
-        if (parsed !== undefined) {
+        if (parsed !== undefined && parsed !== null && parsed.length >= 3) {
             // If this is a valid tweet that contains an youtube video,
             // Add it to our request
+            console.log(parsed);
             message.video_link = parsed[0];
             message.video_id = parsed[2];
             Request.add(message);
@@ -190,37 +185,37 @@ $(function() {
 
     followTag.click(function() {
         var tag = inputTag.val();
+        console.log(tag);
 
         // whenever we add a new tag, send it to server so we can refresh the
         // stream
-        if (val !== undefined && val.length > 0) {
-            Courrier.send(val);
-            tagList.append("<li>" + val + "</li>");
+        if (tag !== undefined && tag.length > 0) {
+            Courrier.send(tag);
+            tagList.append("<li>" + tag + "</li>");
         }
         return false;
     });
 
-    previous.click(function() {
+    previousVid.click(function() {
         // if the pointer is not pointing to the first, then move it back
         current = (current > 0) ? current - 1 : 0;
-
         play();
     });
 
-    next.click(function() {
+    nextVid.click(function() {
         // if the pointer is not pointing to the last, the move it forward
         current = (current < playlist.length - 1) ? current + 1: current;
         play();
     });
 
-    play.click(function() {
+    playVid.click(function() {
         // oh, start playing already
         if (playlist.length > 0 && !isPlaying) {
             player.playVideo();
         }
     });
 
-    pause.click(function() {
+    pauseVid.click(function() {
         // pause the playing
         player.stopVideo();
         isPlaying = false;

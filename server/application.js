@@ -8,7 +8,7 @@ var port = 8011,
     host = "127.0.0.1",
     username = "",
     password = "",
-    tags = [];
+    tags = ["shdhsg"];
 
 // init HTTP server
 var app = http.createServer(function(req, res) { 
@@ -38,7 +38,7 @@ twitter
     socket.broadcast(tweet);
 })
 .addListener('end', function(resp) {
-    console.log("Good bye");
+    console.log("Got it. End request.");
 });
 twitter.stream();
 
@@ -58,8 +58,8 @@ socket.on('connection', function(client){
         // Reset the stream
         twitter.stream();
     });
+
     client.on('disconnect', function(){
         connected = false;
     });
 });
-
